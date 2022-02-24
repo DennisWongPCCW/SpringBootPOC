@@ -8,11 +8,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableAsync
 public class SpringBootSender {
 
 	public static void main(String[] args) {
@@ -37,10 +40,12 @@ public class SpringBootSender {
 	@Value("SpringTestQueue")
 	private String queueName;
 
-	@Scheduled(fixedRate = 30000)
+	@Async
+	@Scheduled(fixedRate = 5000)
 	public void sendEvent() throws Exception {
 		String msg = "Hello World " + System.currentTimeMillis();
 		System.out.println("==========SENDING MESSAGE========== " + msg);
+		
 		jmsTemplate.convertAndSend(queueName, msg);
 	}
 
